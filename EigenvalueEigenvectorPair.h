@@ -33,5 +33,12 @@ public:
     {
         return _rightVector;
     }
+
+    ~EigenvalueEigenvectorPair()
+    {
+        delete &_value;
+        delete &_leftVector;
+        delete &_rightVector;
+    }
 };
 

@@ -56,6 +56,11 @@ void DemonstrateArithmeticOperations()
     cout << endl << endl;
 
     cout << "\\\\------------------------конец----------------------//" << endl << endl;
+    delete matrixA;
+    delete matrixB;
+    delete tmpMatrix;
+    delete vectorC;
+    delete tmpVector;
 }
 
 void ComputeEigenvaluesAndEigenvectors()
@@ -106,6 +111,8 @@ void ComputeEigenvaluesAndEigenvectors()
     }
 
     cout << "\\\\------------------------конец----------------------//" << endl << endl;
+
+    delete matrixA;
 }
 
 int main() 

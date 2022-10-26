@@ -1,5 +1,7 @@
 #pragma once
 
+
+
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -336,6 +338,12 @@ public:
         Matrix* result = Copy(this);
         Transpose(result);
         return result;
+    }
+
+    ~Matrix()
+    {
+        delete[] _matrix;
+        delete _indexator;
     }
         
 };

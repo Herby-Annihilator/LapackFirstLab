@@ -49,5 +49,11 @@ public:
         _indexator->CurrentIndex = index;
         return _indexator;
     }
+
+    ~Eigenvector()
+    {
+        delete _indexator;
+        delete _values;
+    }
 };
 

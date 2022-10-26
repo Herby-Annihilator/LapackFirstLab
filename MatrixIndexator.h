@@ -23,5 +23,9 @@ public:
     {
         *(_matrix + CurrentRow * _columnsCountInMatrix + CurrentColumn) = value;
     }
+    ~MatrixIndexator()
+    {
+        delete[] _matrix;
+    }
 };
 

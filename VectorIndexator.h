@@ -22,5 +22,10 @@ public:
     {
         _vector[CurrentIndex] = value;
     }
+
+    ~VectorIndexator()
+    {
+        delete[] _vector;
+    }
 };
 

@@ -82,5 +82,11 @@ public:
         }
         return result;
     }
+
+    ~Vector()
+    {
+        delete[] _vector;
+        delete _indexator;
+    }
 };
 
