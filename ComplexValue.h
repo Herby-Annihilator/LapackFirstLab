@@ -9,5 +9,8 @@ public:
         RealPart = realPart;
         ImaginaryPart = imaginaryPart;
     }
+    ComplexValue() : ComplexValue(0, 0)
+    {
+    }
 };
 

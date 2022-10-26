@@ -1,5 +1,10 @@
 #pragma once
 
+#include <stdexcept>
+#include <string>
+#include <vector>
+
+#include "Random.h"
 #include "MatrixIndexator.h"
 #include "Indexator.h"
 #include "Vector.h"
@@ -40,6 +45,28 @@ private:
         _matrix = new double[rowsCount * colsCount];
         _indexator = new MatrixIndexator<double>(_matrix, _colsCount);
     }
+
+    static void TransposeSquare(Matrix* matrix)
+    {
+        if (matrix->GetColsCount() != matrix->GetRowsCount())
+        {
+            throw std::invalid_argument("The matrix is not a square matrix");
+        }
+        else
+        {
+            double tmp;
+            for (int i = 0; i < matrix->GetRowsCount(); i++)
+            {
+                for (int j = i + 1; j < matrix->GetColsCount(); j++)
+                {
+                    tmp = matrix->Value(i, j)->Get();
+                    matrix->Value(i, j)->Set(matrix->Value(j, i)->Get());
+                    matrix->Value(j, i)->Set(tmp);
+                }
+            }
+        }
+    }
+
 public:
 
     int GetRowsCount()
@@ -80,6 +107,34 @@ public:
         {
             matrix.Value(i, i)->Set(1);
         }
+    }
+
+    static Matrix* CreateRandom(int rows, int cols)
+    {
+        Matrix* result = new Matrix(rows, cols);
+        Random random;
+        for (int i = 0; i < rows; i++)
+        {
+            for (int j = 0; j < cols; j++)
+            {
+                result->Value(i, j)->Set(random.Next());
+            }
+        }
+        return result;
+    }
+
+    static Matrix* CreateRandom(int rows, int cols, int minimum, int maximum)
+    {
+        Matrix* result = new Matrix(rows, cols);
+        Random random;
+        for (int i = 0; i < rows; i++)
+        {
+            for (int j = 0; j < cols; j++)
+            {
+                result->Value(i, j)->Set(random.Next(minimum, maximum));
+            }
+        }
+        return result;
     }
 
     static Matrix* Copy(Matrix* pattern)
@@ -167,12 +222,17 @@ public:
         return result;
     }
 
-    EigenvalueEigenvectorPair* SolveEigenvaluesAndEigenvectors()
+    vector<EigenvalueEigenvectorPair> ComputeEigenvaluesAndEigenvectors()
     {
+        if (GetRowsCount() != GetColsCount())
+        {
+            throw std::invalid_argument("Matrix must be square");
+        }
         Matrix* tmp = Copy(this);
+        Transpose(tmp);
         char jobvl = 'V', jobvr = 'V';
         int n = GetRowsCount(), lda = n, ldvl = n, ldvr = n, lwork = 4 * n + 1, info = 0;
-        EigenvalueEigenvectorPair* answer = nullptr;
+        vector<EigenvalueEigenvectorPair> answer;
         double* wr = new double[n], * wi = new double[n];
         double* vl = new double[ldvl * n], * vr = new double[ldvr * n];
         double* work = new double[lwork];
@@ -195,15 +255,82 @@ public:
             lwork = work[0];
             if (lwork == -1)
             {
-
+                throw std::exception("Some fuckin thing happend");
+            }
+            else
+            {
+                Eigenvector leftVector(n);
+                Eigenvector rightVector(n);
+                Eigenvalue value;
+                ComplexValue leftComplex;
+                ComplexValue rightComplex;
+                
+                for (int i = 0; i < n; i++)
+                {
+                    value.RealPart = wr[i];
+                    value.ImaginaryPart = wi[i];
+                    for (int j = 0; j < n; j++)
+                    {
+                        leftComplex.RealPart = *(vl + i * n + j);
+                        rightComplex.RealPart = *(vr + i * n + j);
+                        if (value.IsComplex())
+                        {
+                            // что-то с vl/vr надо сделать, я хуй его знаю
+                        }
+                        leftVector.Value(j)->Set(leftComplex);
+                        rightVector.Value(j)->Set(rightComplex);
+                    }
+                    EigenvalueEigenvectorPair pair(value, leftVector, rightVector);
+                    answer.push_back(pair);
+                }
+                
             }
         }
         else
         {
-
+            if (info > 0)
+            {
+                throw std::exception("the QR algorithm failed to compute all the eigenvalues, and no eigenvectors have been computed; ");
+            }
+            else
+            {
+                string message = "the";
+                message.append(std::to_string(info));
+                message.append(" - th argument had an illegal value.");
+                throw std::exception(message.c_str());
+            }
         }
         delete tmp;
         return answer;
     }
+
+    static void Transpose(Matrix* matrix)
+    {
+        if (matrix->GetRowsCount() == matrix->GetColsCount())
+        {
+            TransposeSquare(matrix);
+        }
+        else
+        {
+            Matrix* result = new Matrix(matrix->GetColsCount(), matrix->GetRowsCount());
+            for (int i = 0; i < matrix->GetRowsCount(); i++)
+            {
+                for (int j = 0; j < matrix->GetColsCount(); j++)
+                {
+                    result->Value(j, i)->Set(matrix->Value(i, j)->Get());
+                }
+            }
+            delete matrix;
+            matrix = result;
+        }
+    }
+
+    Matrix* Transpose()
+    {
+        Matrix* result = Copy(this);
+        Transpose(result);
+        return result;
+    }
+        
 };
 
