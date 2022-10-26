@@ -8,9 +8,9 @@
 
 void DemonstrateArithmeticOperations()
 {
-    const string MATRIX_A_FILE_NAME = "";
-    const string MATRIX_B_FILE_NAME = "";
-    const string VECTOR_C_FILE_NAME = "";
+    const string MATRIX_A_FILE_NAME = "matrixA.txt";
+    const string MATRIX_B_FILE_NAME = "matrixB.txt";
+    const string VECTOR_C_FILE_NAME = "vectorC";
 
     MathFactory factory;
     cout << "Чтение матрицы А из файла " << MATRIX_A_FILE_NAME << endl;
@@ -53,7 +53,7 @@ void DemonstrateArithmeticOperations()
 
 void ComputeEigenvaluesAndEigenvectors()
 {
-    const string MATRIX_FILE_NAME = "";
+    const string MATRIX_FILE_NAME = "matrix.txt";
 
     MathFactory factory;
     cout << "Чтение матрицы из файла " << MATRIX_FILE_NAME << endl;
