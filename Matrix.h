@@ -88,24 +88,24 @@ public:
         return _indexator;
     }
 
-    static Matrix Create(int rowsCount, int colsCount, double value)
+    static Matrix* Create(int rowsCount, int colsCount, double value)
     {
-        Matrix matrix(rowsCount, colsCount);
-        matrix.FillBy(value);
+        Matrix* matrix = new Matrix(rowsCount, colsCount);
+        matrix->FillBy(value);
         return matrix;
     }
 
-    static Matrix Create(int rowsCount, int colsCount)
+    static Matrix* Create(int rowsCount, int colsCount)
     {
         return Create(rowsCount, colsCount, 0);
     }
 
-    static Matrix CreateIdentity(int rows)
+    static Matrix* CreateIdentity(int rows)
     {
-        Matrix matrix = Create(rows, rows);
+        Matrix* matrix = Create(rows, rows);
         for (int i = 0; i < rows; i++)
         {
-            matrix.Value(i, i)->Set(1);
+            matrix->Value(i, i)->Set(1);
         }
     }
 

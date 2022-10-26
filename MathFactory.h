@@ -11,12 +11,12 @@ class MathFactory
 {
 public:
 
-    Matrix CreateMatrixFromFile(string fileName)
+    Matrix* CreateMatrixFromFile(string fileName)
     {
         int cols, rows;
         GetMatrixSizeFromFile(fileName, &rows, &cols);
-        Matrix matrix = Matrix::Create(rows, cols);
-        ReadMatrixFromFile(fileName, &matrix);
+        Matrix* matrix = Matrix::Create(rows, cols);
+        ReadMatrixFromFile(fileName, matrix);
         return matrix;
     }
 
