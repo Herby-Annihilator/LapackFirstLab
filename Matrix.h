@@ -54,14 +54,19 @@ private:
         }
         else
         {
-            double tmp;
+            double tmp, tmp1;
             for (int i = 0; i < matrix->GetRowsCount(); i++)
             {
                 for (int j = i + 1; j < matrix->GetColsCount(); j++)
                 {
-                    tmp = matrix->Value(i, j)->Get();
-                    matrix->Value(i, j)->Set(matrix->Value(j, i)->Get());
-                    matrix->Value(j, i)->Set(tmp);
+                    tmp = matrix->Value(j, i)->Get();
+                    tmp1 = matrix->Value(i, j)->Get();
+
+                    matrix->Value(j, i)->Set(tmp1);
+                    matrix->Value(i, j)->Set(tmp);
+
+                    tmp = matrix->Value(j, i)->Get();
+                    tmp1 = matrix->Value(i, j)->Get();
                 }
             }
         }
@@ -194,6 +199,7 @@ public:
             &beta,
             result->_matrix,
             &ldc);
+        Transpose(result);
         return result;
     }
 
@@ -202,12 +208,12 @@ public:
         return Multiply(other);
     }
 
-    Matrix* operator*(Vector* vector)
+    Vector* operator*(Vector* vector)
     {
-        char trans = 'T';
+        char trans = 'N';
         int m = GetRowsCount(), n = GetColsCount(), lda = GetRowsCount(), incX = 1, incY = 1;
         double alpha = 1, beta = 1;
-        Matrix* result = new Matrix(m, vector->GetSize());
+        Vector* result = Vector::Create(vector->GetSize(), 0);
         dgemv_(&trans,
             &m,
             &n,
@@ -217,7 +223,7 @@ public:
             vector->_vector,
             &incX,
             &beta,
-            result->_matrix,
+            result->_vector,
             &incY);
         return result;
     }

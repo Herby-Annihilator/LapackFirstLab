@@ -16,6 +16,10 @@ private:
     int _size = 0;
     double* _vector;
     VectorIndexator<double>* _indexator;
+    Vector()
+    {
+
+    }
 public:
     Vector(int size)
     {
@@ -54,20 +58,29 @@ public:
     Vector* operator*(double value)
     {
         int n = GetSize(), incX = 1;
+        Vector* result = Copy(this);
         double alpha = value;
-        dscal_(&n, &alpha, _vector, &incX);
-        return this;
+        dscal_(&n, &alpha, result->_vector, &incX);
+        return result;
     }
 
     void Display()
     {
         for (int i = 0; i < GetSize(); i++)
         {
-            printf("%0.3f ", _vector[i]);
+            printf("%6.3f ", _vector[i]);
         }
         printf("\r\n");
     }
 
-    
+    static Vector* Copy(Vector* pattern)
+    {
+        Vector* result = Create(pattern->GetSize(), 0);
+        for (int i = 0; i < pattern->GetSize(); i++)
+        {
+            result->Value(i)->Set(pattern->Value(i)->Get());
+        }
+        return result;
+    }
 };
 

@@ -10,7 +10,7 @@ void DemonstrateArithmeticOperations()
 {
     const string MATRIX_A_FILE_NAME = "matrixA.txt";
     const string MATRIX_B_FILE_NAME = "matrixB.txt";
-    const string VECTOR_C_FILE_NAME = "vectorC";
+    const string VECTOR_C_FILE_NAME = "vectorC.txt";
 
     MathFactory factory;
     cout << "Чтение матрицы А из файла " << MATRIX_A_FILE_NAME << endl;
@@ -27,26 +27,33 @@ void DemonstrateArithmeticOperations()
 
     cout << "\\\\------------------------основной вывод----------------------//" << endl << endl;
 
+    cout << endl << endl;
     cout << "Матрица А:" << endl << endl;
     matrixA->Display();
+    cout << endl << endl;
 
     cout << "Матрица B:" << endl << endl;
-    matrixA->Display();
+    matrixB->Display();
+    cout << endl << endl;
 
     cout << endl << endl << "Вектор C:" << endl << endl;
     vectorC->Display();
+    cout << endl << endl;
 
     cout << "Результат умножения векотора C на 5:" << endl << endl;
     tmpVector = *vectorC * 5;
     tmpVector->Display();
+    cout << endl << endl;
 
     cout << "Результат умножения матрицы А на вектор С:" << endl << endl;
-    tmpMatrix = *matrixA * vectorC;
-    tmpMatrix->Display();
+    tmpVector = *matrixA * vectorC;
+    tmpVector->Display();
+    cout << endl << endl;
 
     cout << "Результат умножения матрицы А на матрицу В:" << endl << endl;
     tmpMatrix = *matrixA * matrixB;
     tmpMatrix->Display();
+    cout << endl << endl;
 
     cout << "\\\\------------------------конец----------------------//" << endl << endl;
 }
@@ -103,6 +110,7 @@ void ComputeEigenvaluesAndEigenvectors()
 
 int main() 
 {
+    setlocale(LC_ALL, "ru-RU");
     try
     {
         bool exit = false;
@@ -138,6 +146,7 @@ int main()
     }
     catch (const std::exception& ex)
     {
+        cout << endl << endl << "Exception: ";
         cout << ex.what();
         return 0;
     }

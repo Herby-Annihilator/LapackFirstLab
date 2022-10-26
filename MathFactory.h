@@ -110,10 +110,12 @@ private:
     {
         ifstream reader(filename);
         string line;
+        double value;
         // произвести запись данных в матрицу		
         for (int i = 0; getline(reader, line, ' '); i++)
         {
-            vector->Value(i)->Set(stod(line));
+            value = stod(line);
+            vector->Value(i)->Set(value);
         }
         reader.close();
     }
