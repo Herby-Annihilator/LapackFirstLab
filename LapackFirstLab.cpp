@@ -5,6 +5,8 @@
 #include <string>
 #include <iostream>
 #include "MathFactory.h"
+#include "MathHelper.h"
+#include "EigenvectorToVectorAdapter.h"
 
 void DemonstrateArithmeticOperations()
 {
@@ -66,7 +68,8 @@ void DemonstrateArithmeticOperations()
 void ComputeEigenvaluesAndEigenvectors()
 {
     const string MATRIX_FILE_NAME = "matrix.txt";
-
+    MathHelper helper;
+    Vector* residuals;
     MathFactory factory;
     cout << "Чтение матрицы из файла " << MATRIX_FILE_NAME << endl;
     Matrix* matrixA = factory.CreateMatrixFromFile(MATRIX_FILE_NAME);
@@ -97,10 +100,18 @@ void ComputeEigenvaluesAndEigenvectors()
                 cout << " +- i * " << result->at(i)->GetRightVector()->Value(j)->Get().ImaginaryPart;
             }
             cout << "; ";
-        }
+        } 
         cout << "]";
         cout << endl;
-        cout << "Левый собственный вектор:" << endl;
+        if (!result->at(i)->GetRightVector()->IsComplex())
+        {
+            residuals = helper.CalculateResiduals(matrixA,
+                new EigenvectorToVectorAdapter(result->at(i)->GetRightVector()),
+                result->at(i)->GetValue()->RealPart);
+            cout << "Вектор невязок:" << endl;
+            residuals->Display();
+        }
+        cout << endl << "Левый собственный вектор:" << endl;
         cout << "[ ";
         for (int j = 0; j < result->at(i)->GetLeftVector()->GetSize(); j++)
         {
@@ -112,6 +123,14 @@ void ComputeEigenvaluesAndEigenvectors()
             cout << "; ";
         }
         cout << "]";
+        //if (!result->at(i)->GetLeftVector()->IsComplex())
+        //{
+        //    residuals = helper.CalculateResiduals(matrixA,
+        //        new EigenvectorToVectorAdapter(result->at(i)->GetLeftVector()),
+        //        result->at(i)->GetValue()->RealPart);
+        //    cout << endl << "Вектор невязок:" << endl;
+        //    residuals->Display();
+        //}
         cout << endl << endl;
     }
 

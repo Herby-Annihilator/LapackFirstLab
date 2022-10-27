@@ -146,8 +146,10 @@
     <ClInclude Include="Eigenvalue.h" />
     <ClInclude Include="EigenvalueEigenvectorPair.h" />
     <ClInclude Include="Eigenvector.h" />
+    <ClInclude Include="EigenvectorToVectorAdapter.h" />
     <ClInclude Include="Indexator.h" />
     <ClInclude Include="MathFactory.h" />
+    <ClInclude Include="MathHelper.h" />
     <ClInclude Include="Matrix.h" />
     <ClInclude Include="MatrixIndexator.h" />
     <ClInclude Include="Random.h" />

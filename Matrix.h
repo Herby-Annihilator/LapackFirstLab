@@ -174,7 +174,7 @@ public:
         {
             for (int j = 0; j < GetColsCount(); j++)
             {
-                printf("%0.0f ", Value(i, j)->Get());
+                printf("%0.3f ", Value(i, j)->Get());
             }
             printf("\r\n");
         }
@@ -290,7 +290,9 @@ public:
                         rightComplex->RealPart = *(vr + i * n + j);
                         if (value->IsComplex())
                         {
-                            // что-то с vl/vr надо сделать
+                            i++;
+                            leftComplex->ImaginaryPart = *(vl + i * n + j);
+                            rightComplex->ImaginaryPart = *(vr + i * n + j);
                         }
                         leftVector->Value(j)->Set(*leftComplex);
                         rightVector->Value(j)->Set(*rightComplex);

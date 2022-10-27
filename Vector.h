@@ -13,13 +13,13 @@ extern "C" {
 class Vector
 {
     friend class Matrix;
-private:
+protected:
     int _size = 0;
     double* _vector;
     VectorIndexator<double>* _indexator;
     Vector() : Vector(0)
     {
-        
+
     }
 public:
     Vector(int size)
@@ -96,7 +96,7 @@ public:
     {
         for (int i = 0; i < GetSize(); i++)
         {
-            printf("%0.0f ", _vector[i]);
+            printf("%0.3f ", _vector[i]);
         }
         printf("\r\n");
     }
