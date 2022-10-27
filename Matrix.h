@@ -48,6 +48,11 @@ private:
         _indexator = new MatrixIndexator<double>(_matrix, _colsCount);
     }
 
+    Matrix()
+    {
+
+    }
+
     static void TransposeSquare(Matrix* matrix)
     {
         if (matrix->GetColsCount() != matrix->GetRowsCount())
@@ -93,6 +98,15 @@ public:
         _indexator->CurrentRow = row;
         _indexator->CurrentColumn = col;
         return _indexator;
+    }
+
+    static Matrix* Create(double* oneDimensionalMatrix, int rows, int cols)
+    {
+        Matrix* result = new Matrix();
+        result->_matrix = oneDimensionalMatrix;
+        result->_rowsCount = rows;
+        result->_colsCount = cols;
+        result->_indexator = new MatrixIndexator<double>(result->_matrix, cols);
     }
 
     static Matrix* Create(int rowsCount, int colsCount, double value)
