@@ -174,7 +174,7 @@ public:
         {
             for (int j = 0; j < GetColsCount(); j++)
             {
-                printf("%0.3f ", Value(i, j)->Get());
+                printf("%0.0f ", Value(i, j)->Get());
             }
             printf("\r\n");
         }
@@ -290,15 +290,12 @@ public:
                         rightComplex->RealPart = *(vr + i * n + j);
                         if (value->IsComplex())
                         {
-                            // что-то с vl/vr надо сделать, я хуй его знаю
+                            // что-то с vl/vr надо сделать
                         }
                         leftVector->Value(j)->Set(*leftComplex);
                         rightVector->Value(j)->Set(*rightComplex);
                     }
                     pair = new EigenvalueEigenvectorPair(value, leftVector, rightVector);
-                    /*pair._value = value;
-                    pair._leftVector = leftVector;
-                    pair._rightVector = rightVector;*/
                     answer->push_back(pair);
                 }
             }

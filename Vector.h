@@ -3,6 +3,7 @@
 #include "Indexator.h"
 #include "VectorIndexator.h"
 #include "Matrix.h"
+#include "Random.h"
 #include <stdio.h>
 
 extern "C" {
@@ -16,9 +17,9 @@ private:
     int _size = 0;
     double* _vector;
     VectorIndexator<double>* _indexator;
-    Vector()
+    Vector() : Vector(0)
     {
-
+        
     }
 public:
     Vector(int size)
@@ -31,6 +32,33 @@ public:
     {
         Vector* result = new Vector(size);
         result->FillBy(value);
+        return result;
+    }
+
+    static Vector* Create(int size)
+    {
+        return Create(size, 0);
+    }
+
+    static Vector* CreateRandom(int size)
+    {
+        Vector* result = new Vector(size);
+        Random random;
+        for (int i = 0; i < size; i++)
+        {
+            result->Value(i)->Set(random.Next());
+        }
+        return result;
+    }
+
+    static Vector* CreateRandom(int size, double minimum, double maximum)
+    {
+        Vector* result = new Vector(size);
+        Random random;
+        for (int i = 0; i < size; i++)
+        {
+            result->Value(i)->Set(random.Next(minimum, maximum));
+        }
         return result;
     }
 
@@ -68,7 +96,7 @@ public:
     {
         for (int i = 0; i < GetSize(); i++)
         {
-            printf("%6.3f ", _vector[i]);
+            printf("%0.0f ", _vector[i]);
         }
         printf("\r\n");
     }

@@ -56,11 +56,11 @@ void DemonstrateArithmeticOperations()
     cout << endl << endl;
 
     cout << "\\\\------------------------конец----------------------//" << endl << endl;
-    delete matrixA;
+    /*delete matrixA;
     delete matrixB;
     delete tmpMatrix;
     delete vectorC;
-    delete tmpVector;
+    delete tmpVector;*/
 }
 
 void ComputeEigenvaluesAndEigenvectors()
@@ -120,6 +120,49 @@ void ComputeEigenvaluesAndEigenvectors()
     //delete matrixA;
 }
 
+void DemonstrateArithmeticOperationsWithLargeMatriciesAndVectors()
+{
+    int size;
+    double minimum, maximum;
+    cout << endl << "Введите размерность матрицы А и вектора С: ";
+    cin >> size;
+    cout << "Введите минимальное значение для элеметов: ";
+    cin >> minimum;
+    cout << "Введите максимальное значение для элеметов: ";
+    cin >> maximum;
+    Matrix* matrix = Matrix::CreateRandom(size, size, minimum, maximum);
+    Vector* vector = Vector::CreateRandom(size, minimum, maximum);
+
+    cout << endl << endl << "\\\\--------------------------генерация отчета------------------------//";
+
+    cout << endl << endl << "Матрица А:" << endl << endl;
+    matrix->Display();
+    
+    cout << endl << endl << "Вектор С:" << endl << endl;
+    vector->Display();
+    
+    cout << endl << endl << "Введите число, на которое следует умножить вектор: ";
+    double mult;
+    cin >> mult;
+    cout << endl << "Результат умножения вектора на " << mult << ":" << endl << endl;
+    Vector* vectorMult = *vector * mult;
+    vectorMult->Display();
+
+    cout << endl << endl << "Результат умножения матрицы А на вектор В:" << endl << endl;
+    vectorMult = *matrix * vector;
+    vectorMult->Display();
+
+    cout << endl << endl << "Генерация матрицы В:" << endl << endl;
+    Matrix* matrixB = Matrix::CreateRandom(size, size, minimum, maximum);
+    matrixB->Display();
+
+    cout << endl << endl << "Результат умножения матицы А на матрицу В:" << endl << endl;
+    Matrix* matrixMult = *matrix * matrixB;
+    matrixMult->Display();
+
+    cout << endl << endl << "\\\\--------------------------конец отчета------------------------//" << endl << endl;
+}
+
 int main() 
 {
     setlocale(LC_ALL, "ru-RU");
@@ -133,7 +176,9 @@ int main()
                 << endl 
                 << "2 - Расчет собственных значений и векторов" 
                 << endl 
-                << "3 - Выход"
+                << "3 - Арифметика с рандомными матрицей и вектором указанного размера"
+                << endl
+                << "4 - Выход"
                 << endl
                 << "Ваш выбор: ";
 
@@ -147,6 +192,10 @@ int main()
                 ComputeEigenvaluesAndEigenvectors();
             }
             else if (variant == 3)
+            {
+                DemonstrateArithmeticOperationsWithLargeMatriciesAndVectors();
+            }
+            else if (variant == 4)
             {
                 exit = true;
             }
