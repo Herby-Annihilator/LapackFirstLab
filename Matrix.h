@@ -230,7 +230,7 @@ public:
         return result;
     }
 
-    vector<EigenvalueEigenvectorPair> ComputeEigenvaluesAndEigenvectors()
+    vector<EigenvalueEigenvectorPair*>* ComputeEigenvaluesAndEigenvectors()
     {
         if (GetRowsCount() != GetColsCount())
         {
@@ -240,7 +240,7 @@ public:
         Transpose(tmp);
         char jobvl = 'V', jobvr = 'V';
         int n = GetRowsCount(), lda = n, ldvl = n, ldvr = n, lwork = 4 * n + 1, info = 0;
-        vector<EigenvalueEigenvectorPair> answer;
+        vector<EigenvalueEigenvectorPair*>* answer = new vector<EigenvalueEigenvectorPair*>();
         double* wr = new double[n], * wi = new double[n];
         double* vl = new double[ldvl * n], * vr = new double[ldvr * n];
         double* work = new double[lwork];
@@ -267,31 +267,40 @@ public:
             }
             else
             {
-                Eigenvector leftVector(n);
-                Eigenvector rightVector(n);
-                Eigenvalue value;
-                ComplexValue leftComplex;
-                ComplexValue rightComplex;
+                EigenvalueEigenvectorPair* pair;
+                Eigenvector* leftVector = new Eigenvector(n);
+                Eigenvector* rightVector = new Eigenvector(n);
+                Eigenvalue* value = new Eigenvalue();
+                ComplexValue* leftComplex = new ComplexValue();
+                ComplexValue* rightComplex = new ComplexValue();
                 
                 for (int i = 0; i < n; i++)
                 {
-                    value.RealPart = wr[i];
-                    value.ImaginaryPart = wi[i];
+                    leftVector = new Eigenvector(n);
+                    rightVector = new Eigenvector(n);
+                    value = new Eigenvalue();
+                    leftComplex = new ComplexValue();
+                    rightComplex = new ComplexValue();
+
+                    value->RealPart = wr[i];
+                    value->ImaginaryPart = wi[i];
                     for (int j = 0; j < n; j++)
                     {
-                        leftComplex.RealPart = *(vl + i * n + j);
-                        rightComplex.RealPart = *(vr + i * n + j);
-                        if (value.IsComplex())
+                        leftComplex->RealPart = *(vl + i * n + j);
+                        rightComplex->RealPart = *(vr + i * n + j);
+                        if (value->IsComplex())
                         {
                             // что-то с vl/vr надо сделать, я хуй его знаю
                         }
-                        leftVector.Value(j)->Set(leftComplex);
-                        rightVector.Value(j)->Set(rightComplex);
+                        leftVector->Value(j)->Set(*leftComplex);
+                        rightVector->Value(j)->Set(*rightComplex);
                     }
-                    EigenvalueEigenvectorPair pair(value, leftVector, rightVector);
-                    answer.push_back(pair);
+                    pair = new EigenvalueEigenvectorPair(value, leftVector, rightVector);
+                    /*pair._value = value;
+                    pair._leftVector = leftVector;
+                    pair._rightVector = rightVector;*/
+                    answer->push_back(pair);
                 }
-                
             }
         }
         else
@@ -308,7 +317,7 @@ public:
                 throw std::exception(message.c_str());
             }
         }
-        delete tmp;
+       // delete tmp;
         return answer;
     }
 

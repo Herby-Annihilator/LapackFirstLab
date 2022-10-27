@@ -77,42 +77,47 @@ void ComputeEigenvaluesAndEigenvectors()
     matrixA->Display();
 
     cout << "Расчет собственных чисел и векторов..." << endl << endl;
-    vector<EigenvalueEigenvectorPair> result = matrixA->ComputeEigenvaluesAndEigenvectors();
+    vector<EigenvalueEigenvectorPair*>* result = matrixA->ComputeEigenvaluesAndEigenvectors();
 
-    for (int i = 0; i < result.size(); i++)
+    for (int i = 0; i < result->size(); i++)
     {
-        cout << "Собственное число: " << result[i].GetValue().RealPart;
-        if (result[i].GetValue().IsComplex())
+        cout << "Собственное число: " << result->at(i)->GetValue()->RealPart;
+        if (result->at(i)->GetValue()->IsComplex())
         {
-            cout << " +- i * " << result[i].GetValue().ImaginaryPart;
+            cout << " +- i * " << result->at(i)->GetValue()->ImaginaryPart;
         }
         cout << endl;
         cout << "Правый собственный вектор:" << endl;
-        for (int j = 0; j < result[i].GetRightVector().GetSize(); j++)
+        cout << "[ ";
+        for (int j = 0; j < result->at(i)->GetRightVector()->GetSize(); j++)
         {
-            cout << result[i].GetRightVector().Value(j)->Get().RealPart;
-            if (result[i].GetRightVector().Value(j)->Get().ImaginaryPart != 0)
+            cout << result->at(i)->GetRightVector()->Value(j)->Get().RealPart;
+            if (result->at(i)->GetRightVector()->Value(j)->Get().ImaginaryPart != 0)
             {
-                cout << " +- i * " << result[i].GetRightVector().Value(j)->Get().ImaginaryPart;
+                cout << " +- i * " << result->at(i)->GetRightVector()->Value(j)->Get().ImaginaryPart;
             }
-            cout << " ";
+            cout << "; ";
         }
+        cout << "]";
         cout << endl;
         cout << "Левый собственный вектор:" << endl;
-        for (int j = 0; j < result[i].GetLeftVector().GetSize(); j++)
+        cout << "[ ";
+        for (int j = 0; j < result->at(i)->GetLeftVector()->GetSize(); j++)
         {
-            cout << result[i].GetLeftVector().Value(j)->Get().RealPart;
-            if (result[i].GetLeftVector().Value(j)->Get().ImaginaryPart != 0)
+            cout << result->at(i)->GetLeftVector()->Value(j)->Get().RealPart;
+            if (result->at(i)->GetLeftVector()->Value(j)->Get().ImaginaryPart != 0)
             {
-                cout << " +- i * " << result[i].GetLeftVector().Value(j)->Get().ImaginaryPart;
+                cout << " +- i * " << result->at(i)->GetLeftVector()->Value(j)->Get().ImaginaryPart;
             }
-            cout << " ";
+            cout << "; ";
         }
+        cout << "]";
+        cout << endl << endl;
     }
 
     cout << "\\\\------------------------конец----------------------//" << endl << endl;
 
-    delete matrixA;
+    //delete matrixA;
 }
 
 int main() 

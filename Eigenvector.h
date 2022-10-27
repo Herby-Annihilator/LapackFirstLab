@@ -20,7 +20,7 @@ public:
     Eigenvector(int size)
     {
         _size = size;
-        _values = new ComplexValue(0, 0);
+        _values = new ComplexValue[size];
         _indexator = new VectorIndexator<ComplexValue>(_values);
     }
     int GetSize()

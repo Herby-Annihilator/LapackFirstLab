@@ -6,30 +6,31 @@
 class EigenvalueEigenvectorPair
 {
 private:
-    Eigenvalue _value;
-    Eigenvector _leftVector;
-    Eigenvector _rightVector;
+    
 public:
+    Eigenvalue* _value;
+    Eigenvector* _leftVector;
+    Eigenvector* _rightVector;
     EigenvalueEigenvectorPair()
     {
         
     }
-    EigenvalueEigenvectorPair(Eigenvalue value, Eigenvector leftVector, Eigenvector rightVector)
+    EigenvalueEigenvectorPair(Eigenvalue* value, Eigenvector* leftVector, Eigenvector* rightVector)
     {
         _value = value;
         _leftVector = leftVector;
         _rightVector = rightVector;
     }
 
-    Eigenvalue& GetValue()
+    Eigenvalue* GetValue()
     {
         return _value;
     }
-    Eigenvector& GetLeftVector()
+    Eigenvector* GetLeftVector()
     {
         return _leftVector;
     }
-    Eigenvector& GetRightVector()
+    Eigenvector* GetRightVector()
     {
         return _rightVector;
     }
