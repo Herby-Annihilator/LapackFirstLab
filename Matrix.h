@@ -107,6 +107,7 @@ public:
         result->_rowsCount = rows;
         result->_colsCount = cols;
         result->_indexator = new MatrixIndexator<double>(result->_matrix, cols);
+        return result;
     }
 
     static Matrix* Create(int rowsCount, int colsCount, double value)
@@ -282,34 +283,56 @@ public:
             else
             {
                 EigenvalueEigenvectorPair* pair;
-                Eigenvector* leftVector = new Eigenvector(n);
-                Eigenvector* rightVector = new Eigenvector(n);
-                Eigenvalue* value = new Eigenvalue();
-                ComplexValue* leftComplex = new ComplexValue();
-                ComplexValue* rightComplex = new ComplexValue();
-                
+                Eigenvector* leftVector;
+                Eigenvector* rightVector;
+                Eigenvalue* value;
+                ComplexValue* complexForLeftVector;
+                ComplexValue* complexForRightVector;
+                Matrix* leftVectors = Create(vl, n, n);
+                Matrix* rightVectors = Create(vr, n, n);
+                //Transpose(leftVectors);
+                //Transpose(rightVectors);
                 for (int i = 0; i < n; i++)
                 {
                     leftVector = new Eigenvector(n);
                     rightVector = new Eigenvector(n);
                     value = new Eigenvalue();
-                    leftComplex = new ComplexValue();
-                    rightComplex = new ComplexValue();
-
+                    complexForLeftVector = new ComplexValue();
+                    complexForRightVector = new ComplexValue();
+                    
                     value->RealPart = wr[i];
                     value->ImaginaryPart = wi[i];
-                    for (int j = 0; j < n; j++)
+
+                    // для комплексного числа 4 собственных вектора: 2 левых и 2 правых
+                    if (value->IsComplex())
                     {
-                        leftComplex->RealPart = *(vl + i * n + j);
-                        rightComplex->RealPart = *(vr + i * n + j);
-                        if (value->IsComplex())
+                        // элемент левого вектора = vl[:; j] + i * vl[:; j + 1]
+                        // элемент левого вектора = vl[:; j] - i * vl[:; j + 1]
+                        for (int j = 0; j < leftVectors->GetRowsCount() - 1; j++)
                         {
-                            i++;
-                            leftComplex->ImaginaryPart = *(vl + i * n + j);
-                            rightComplex->ImaginaryPart = *(vr + i * n + j);
+                            complexForLeftVector->RealPart = leftVectors->Value(j, i)->Get();
+                            complexForLeftVector->ImaginaryPart = leftVectors->Value(j + 1, i)->Get();
+                            leftVector->Value(j)->Set(*complexForLeftVector);   
                         }
-                        leftVector->Value(j)->Set(*leftComplex);
-                        rightVector->Value(j)->Set(*rightComplex);
+                        // элемент правого вектора = vr[:; j] + i * vr[:; j + 1]
+                        // элемент правого вектора = vr[:; j] - i * vr[:; j + 1]
+                        for (int j = 0; j < rightVectors->GetRowsCount() - 1; j++)
+                        {
+                            complexForRightVector->RealPart = rightVectors->Value(j, i)->Get();
+                            complexForRightVector->ImaginaryPart = rightVectors->Value(j + 1, i)->Get();
+                            rightVector->Value(j)->Set(*complexForRightVector);
+                        }
+                    }
+                    else
+                    {
+                        for (int j = 0; j < n; j++)
+                        {
+                            complexForLeftVector->RealPart = leftVectors->Value(j, i)->Get();
+                            leftVector->Value(j)->Set(*complexForLeftVector);
+
+                            complexForRightVector->RealPart = rightVectors->Value(j, i)->Get();
+                            rightVector->Value(j)->Set(*complexForRightVector);
+                        }                       
                     }
                     pair = new EigenvalueEigenvectorPair(value, leftVector, rightVector);
                     answer->push_back(pair);

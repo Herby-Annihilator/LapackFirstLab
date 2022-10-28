@@ -65,21 +65,61 @@ void DemonstrateArithmeticOperations()
     delete tmpVector;*/
 }
 
-void ComputeEigenvaluesAndEigenvectors()
+enum CreationVariant
+{
+    FromFile, Random
+};
+
+Matrix* CreateMatrix(CreationVariant variant)
 {
     const string MATRIX_FILE_NAME = "matrix.txt";
-    MathHelper helper;
+    Matrix* result = nullptr;
+    switch (variant)
+    {
+    case FromFile:
+    {
+        MathFactory factory;
+        cout << "Чтение матрицы из файла " << MATRIX_FILE_NAME << endl;
+        result = factory.CreateMatrixFromFile(MATRIX_FILE_NAME);
+        cout << "Матрица прочитана " << endl;
+        break;
+    }
+    case Random:
+    {
+        int size = 0, min, max;
+        cout << endl << "Введите размер матрицы: ";
+        cin >> size;
+        cout << "Введите минимальное значение элемента матрицы (min): ";
+        cin >> min;
+        cout << "Введите максимальное значение элемента матрицы (max): ";
+        cin >> max;
+        cout << "Генерация матрицы..." << endl;
+        result = Matrix::CreateRandom(size, size, min, max);
+        cout << "Матрица сгенерирована" << endl;
+        break;
+    }
+    default:
+        break;
+    }
+    return result;
+}
+
+void ComputeEigenvaluesAndEigenvectors(Matrix* matrixA)
+{
+    if (matrixA == nullptr)
+    {
+        throw std::invalid_argument("matrix is null");
+    }
     Vector* residuals;
-    MathFactory factory;
-    cout << "Чтение матрицы из файла " << MATRIX_FILE_NAME << endl;
-    Matrix* matrixA = factory.CreateMatrixFromFile(MATRIX_FILE_NAME);
+    MathHelper helper;
+    bool displaResiduals = true;
 
     cout << "\\\\------------------------основной вывод----------------------//" << endl << endl;
 
     cout << "Матрица:" << endl << endl;
     matrixA->Display();
 
-    cout << "Расчет собственных чисел и векторов..." << endl << endl;
+    cout << endl << "Расчет собственных чисел и векторов..." << endl << endl;
     vector<EigenvalueEigenvectorPair*>* result = matrixA->ComputeEigenvaluesAndEigenvectors();
 
     for (int i = 0; i < result->size(); i++)
@@ -102,13 +142,12 @@ void ComputeEigenvaluesAndEigenvectors()
             cout << "; ";
         } 
         cout << "]";
-        cout << endl;
-        if (!result->at(i)->GetRightVector()->IsComplex())
+        if (!result->at(i)->GetRightVector()->IsComplex() && displaResiduals)
         {
             residuals = helper.CalculateResiduals(matrixA,
                 new EigenvectorToVectorAdapter(result->at(i)->GetRightVector()),
                 result->at(i)->GetValue()->RealPart);
-            cout << "Вектор невязок:" << endl;
+            cout << endl << "Вектор невязок:" << endl;
             residuals->Display();
         }
         cout << endl << "Левый собственный вектор:" << endl;
@@ -123,14 +162,6 @@ void ComputeEigenvaluesAndEigenvectors()
             cout << "; ";
         }
         cout << "]";
-        //if (!result->at(i)->GetLeftVector()->IsComplex())
-        //{
-        //    residuals = helper.CalculateResiduals(matrixA,
-        //        new EigenvectorToVectorAdapter(result->at(i)->GetLeftVector()),
-        //        result->at(i)->GetValue()->RealPart);
-        //    cout << endl << "Вектор невязок:" << endl;
-        //    residuals->Display();
-        //}
         cout << endl << endl;
     }
 
@@ -138,6 +169,8 @@ void ComputeEigenvaluesAndEigenvectors()
 
     //delete matrixA;
 }
+
+
 
 void DemonstrateArithmeticOperationsWithLargeMatriciesAndVectors()
 {
@@ -193,11 +226,13 @@ int main()
         {
             cout << "1 - Арифметические операции" 
                 << endl 
-                << "2 - Расчет собственных значений и векторов" 
+                << "2 - Расчет собственных значений и векторов (из файла)" 
                 << endl 
                 << "3 - Арифметика с рандомными матрицей и вектором указанного размера"
                 << endl
-                << "4 - Выход"
+                << "4 - Расчет собственных значений и векторов (рандомная матрица)"
+                << endl
+                << "5 - Выход"
                 << endl
                 << "Ваш выбор: ";
 
@@ -208,13 +243,17 @@ int main()
             }
             else if (variant == 2)
             {
-                ComputeEigenvaluesAndEigenvectors();
+                ComputeEigenvaluesAndEigenvectors(CreateMatrix(CreationVariant::FromFile));
             }
             else if (variant == 3)
             {
                 DemonstrateArithmeticOperationsWithLargeMatriciesAndVectors();
             }
             else if (variant == 4)
+            {
+                ComputeEigenvaluesAndEigenvectors(CreateMatrix(CreationVariant::Random));
+            }
+            else if (variant == 5)
             {
                 exit = true;
             }
