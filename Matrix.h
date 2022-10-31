@@ -290,8 +290,8 @@ public:
                 ComplexValue* complexForRightVector;
                 Matrix* leftVectors = Create(vl, n, n);
                 Matrix* rightVectors = Create(vr, n, n);
-                //Transpose(leftVectors);
-                //Transpose(rightVectors);
+                Transpose(leftVectors);
+                Transpose(rightVectors);
                 for (int i = 0; i < n; i++)
                 {
                     leftVector = new Eigenvector(n);

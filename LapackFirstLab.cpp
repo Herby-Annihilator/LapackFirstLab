@@ -7,6 +7,7 @@
 #include "MathFactory.h"
 #include "MathHelper.h"
 #include "EigenvectorToVectorAdapter.h"
+#include "TestMatrix.h"
 
 void DemonstrateArithmeticOperations()
 {
@@ -142,10 +143,10 @@ void ComputeEigenvaluesAndEigenvectors(Matrix* matrixA)
             cout << "; ";
         } 
         cout << "]";
-        if (!result->at(i)->GetRightVector()->IsComplex() && displaResiduals)
+        if (!result->at(i)->GetLeftVector()->IsComplex() && displaResiduals)
         {
             residuals = helper.CalculateResiduals(matrixA,
-                new EigenvectorToVectorAdapter(result->at(i)->GetRightVector()),
+                new EigenvectorToVectorAdapter(result->at(i)->GetLeftVector()),
                 result->at(i)->GetValue()->RealPart);
             cout << endl << "Вектор невязок:" << endl;
             residuals->Display();
@@ -232,7 +233,9 @@ int main()
                 << endl
                 << "4 - Расчет собственных значений и векторов (рандомная матрица)"
                 << endl
-                << "5 - Выход"
+                << "5 - Запуск теста"
+                << endl
+                << "6 - Выход"
                 << endl
                 << "Ваш выбор: ";
 
@@ -254,6 +257,11 @@ int main()
                 ComputeEigenvaluesAndEigenvectors(CreateMatrix(CreationVariant::Random));
             }
             else if (variant == 5)
+            {
+                TestMatrix test;
+                test.StartTest();
+            }
+            else if (variant == 6)
             {
                 exit = true;
             }

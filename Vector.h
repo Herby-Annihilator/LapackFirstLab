@@ -111,6 +111,39 @@ public:
         return result;
     }
 
+    bool Equal(Vector* other)
+    {
+        if (other == nullptr)
+            return false;
+        if (other->GetSize() != this->GetSize())
+            return false;
+        for (int i = 0; i < this->GetSize(); i++)
+        {
+            if (other->Value(i)->Get() != this->Value(i)->Get())
+                return false;
+        }
+        return true;
+    }
+
+    void ThrowIfNotEqual(Vector* other)
+    {
+        if (other == nullptr)
+            throw std::invalid_argument("Input vector is null");
+        if (other->GetSize() != this->GetSize())
+            throw exception("Size is not equal");
+        for (int i = 0; i < this->GetSize(); i++)
+        {
+            if (other->Value(i)->Get() != this->Value(i)->Get())
+            {
+                string message = "";
+                message.append(std::to_string(other->Value(i)->Get()));
+                message.append(" is not equal to ");
+                message.append(std::to_string(this->Value(i)->Get()));
+                throw exception(message.c_str());
+            }  
+        }
+    }
+
     ~Vector()
     {
         delete[] _vector;
