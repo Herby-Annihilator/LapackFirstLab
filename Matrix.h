@@ -308,20 +308,23 @@ public:
                     {
                         // элемент левого вектора = vl[:; j] + i * vl[:; j + 1]
                         // элемент левого вектора = vl[:; j] - i * vl[:; j + 1]
-                        for (int j = 0; j < leftVectors->GetRowsCount() - 1; j++)
+                        for (int j = 0; j < leftVectors->GetRowsCount(); j++)
                         {
                             complexForLeftVector->RealPart = leftVectors->Value(j, i)->Get();
-                            complexForLeftVector->ImaginaryPart = leftVectors->Value(j + 1, i)->Get();
+                            if (i + 1 < n)
+                                complexForLeftVector->ImaginaryPart = leftVectors->Value(j, i + 1)->Get();
                             leftVector->Value(j)->Set(*complexForLeftVector);   
                         }
                         // элемент правого вектора = vr[:; j] + i * vr[:; j + 1]
                         // элемент правого вектора = vr[:; j] - i * vr[:; j + 1]
-                        for (int j = 0; j < rightVectors->GetRowsCount() - 1; j++)
+                        for (int j = 0; j < rightVectors->GetRowsCount(); j++)
                         {
                             complexForRightVector->RealPart = rightVectors->Value(j, i)->Get();
-                            complexForRightVector->ImaginaryPart = rightVectors->Value(j + 1, i)->Get();
+                            if (i + 1 < n)
+                                complexForRightVector->ImaginaryPart = rightVectors->Value(j, i + 1)->Get();
                             rightVector->Value(j)->Set(*complexForRightVector);
                         }
+                        i++;
                     }
                     else
                     {
