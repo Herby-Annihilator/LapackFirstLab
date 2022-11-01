@@ -38,6 +38,8 @@ class Vector;
 
 class Matrix
 {
+    friend class TestLu;
+
 private:
     int _rowsCount;
     int _colsCount;
@@ -109,7 +111,7 @@ private:
         {
             for (int j = 0; j < a->GetColsCount(); j++)
             {
-                if (m >= n)
+                if (i >= j)
                 {
                     _uMatrix->Value(i, j)->Set(a->Value(i, j)->Get());
                 }
@@ -480,6 +482,50 @@ public:
             x->Value(i)->Set(1 / _uMatrix->Value(i, i)->Get() * (y->Value(i)->Get() - sum));
         }
         return x;
+    }
+
+    void ThrowIfNotEqual(Matrix* other)
+    {
+        string message = "";
+        if (other == nullptr)
+            throw std::invalid_argument("Input matrix is null");
+        if (this->GetRowsCount() != other->GetRowsCount())
+        {
+            message.append("This rows count (" 
+                + std::to_string(this->GetRowsCount()) 
+                + ") is not equal to other rows count("
+                + std::to_string(other->GetRowsCount())
+                + ")");
+            throw exception(message.c_str());
+        }
+        if (this->GetColsCount() != other->GetColsCount())
+        {
+            message.append("This cols count ("
+                + std::to_string(this->GetColsCount())
+                + ") is not equal to other cols count("
+                + std::to_string(other->GetColsCount())
+                + ")");
+            throw exception(message.c_str());
+        }
+        for (int i = 0; i < GetRowsCount(); i++)
+        {
+            for (int j = 0; j < GetColsCount(); j++)
+            {
+                if (this->Value(i, j)->Get() != other->Value(i, j)->Get())
+                {
+                    message.append("This["
+                        + std::to_string(i)
+                        + "]["
+                        + std::to_string(j) 
+                        + "] == ("
+                        + std::to_string(this->Value(i, j)->Get())
+                        + ") is not equal to other cols count("
+                        + std::to_string(other->GetColsCount())
+                        + ")");
+                    throw exception(message.c_str());
+                }
+            }
+        }
     }
 
     ~Matrix()
