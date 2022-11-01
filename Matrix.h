@@ -107,6 +107,7 @@ private:
             &info);
         _lMatrix = Create(m, n);
         _uMatrix = Create(m, n);
+        //Transpose(a);
         for (int i = 0; i < a->GetRowsCount(); i++)
         {
             for (int j = 0; j < a->GetColsCount(); j++)
@@ -519,8 +520,12 @@ public:
                         + std::to_string(j) 
                         + "] == ("
                         + std::to_string(this->Value(i, j)->Get())
-                        + ") is not equal to other cols count("
-                        + std::to_string(other->GetColsCount())
+                        + ") is not equal to other["
+                        + std::to_string(i)
+                        + "]["
+                        + std::to_string(j)
+                        + "] == ("
+                        + std::to_string(other->Value(i, j)->Get())
                         + ")");
                     throw exception(message.c_str());
                 }

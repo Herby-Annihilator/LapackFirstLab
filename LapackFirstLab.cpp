@@ -8,6 +8,7 @@
 #include "MathHelper.h"
 #include "EigenvectorToVectorAdapter.h"
 #include "TestMatrix.h"
+#include "TestLu.h"
 
 void DemonstrateArithmeticOperations()
 {
@@ -235,7 +236,9 @@ int main()
                 << endl
                 << "5 - Запуск теста"
                 << endl
-                << "6 - Выход"
+                << "6 - Запуск теста LU"
+                << endl
+                << "7 - Выход"
                 << endl
                 << "Ваш выбор: ";
 
@@ -263,6 +266,11 @@ int main()
             }
             else if (variant == 6)
             {
+                TestLu testLu;
+                testLu.GetLuFactorization_CheckMatrices_ShouldNotThrow();
+            }
+            else if (variant == 7)
+            {
                 exit = true;
             }
             else
@@ -274,7 +282,7 @@ int main()
     catch (const std::exception& ex)
     {
         cout << endl << endl << "Exception: ";
-        cout << ex.what();
+        cout << ex.what() << endl << endl;
         return 0;
     }
     return 0;

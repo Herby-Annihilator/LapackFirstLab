@@ -1,4 +1,5 @@
 #pragma once
+#include <iostream>
 
 #include "Matrix.h"
 
@@ -80,9 +81,24 @@ public:
 
     void GetLuFactorization_CheckMatrices_ShouldNotThrow()
     {
+        cout << "Initializing test matrix... ";
         InitAMatrix();
+        cout << "Done!" << endl;
+        cout << "Initializing factorised matrix... ";
         InitFactorisedAMtrix();
+        cout << "Done!" << endl;
+        cout << "Initializing L and U matrices... ";
         InitLUMatrices();
+        cout << "Done!" << endl;
+        cout << "Getting LU-factorization... ";
+        _aMatrix->GetLuFactorization();
+        cout << "Done!" << endl;
+        cout << "Comparing L matrices... ";
+        _lMatrix->ThrowIfNotEqual(_aMatrix->_lMatrix);
+        cout << "Done!" << endl;
+        cout << "Comparing U matrices... ";
+        _uMatrix->ThrowIfNotEqual(_aMatrix->_uMatrix);
+        cout << "Done!" << endl << "Test successfuly completed!" << endl;
     }
 };
 
