@@ -11,24 +11,27 @@
 #include "Indexator.h"
 #include "Vector.h"
 #include "EigenvalueEigenvectorPair.h"
-#define MATR double*
-#define VEC double*
+#define DOUBLE_MATR double*
+#define DOUBLE_VEC double*
+#define INTEGER_MATR int*
 #define IN
 #define OUT
 
 
 extern "C" {
     void dgemm_(char* TransA, char* TransB, int* M, int* N,
-        int* K, double* alpha, IN MATR A,
-        int* lda, IN MATR B, int* ldb,
-        double* beta, OUT MATR C, int* ldc);
+        int* K, double* alpha, IN DOUBLE_MATR A,
+        int* lda, IN DOUBLE_MATR B, int* ldb,
+        double* beta, OUT DOUBLE_MATR C, int* ldc);
 
-    void dgemv_(char* TRANS, int* M, int* N, double* ALPHA, IN MATR A, int* LDA,
-        IN VEC X, int* INCX, double* BETA, OUT MATR Y, int* INCY);
+    void dgemv_(char* TRANS, int* M, int* N, double* ALPHA, IN DOUBLE_MATR A, int* LDA,
+        IN DOUBLE_VEC X, int* INCX, double* BETA, OUT DOUBLE_MATR Y, int* INCY);
 
-    void dgeev_(char* JOBVL, char* JOBVR, int* N, IN OUT MATR A, int* LDA, OUT VEC WR,
-        OUT VEC WI, OUT MATR VL, int* LDVL, OUT MATR VR,
-        int* LDVR, OUT VEC WORK, int* LWORK, int* INFO);
+    void dgeev_(char* JOBVL, char* JOBVR, int* N, IN OUT DOUBLE_MATR A, int* LDA, OUT DOUBLE_VEC WR,
+        OUT DOUBLE_VEC WI, OUT DOUBLE_MATR VL, int* LDVL, OUT DOUBLE_MATR VR,
+        int* LDVR, OUT DOUBLE_VEC WORK, int* LWORK, int* INFO);
+
+    void dgetrf_(int* M, int* N, DOUBLE_MATR A, int* LDA, INTEGER_MATR IPIV, int* INFO);
 }
 
 class Vector;
@@ -40,17 +43,26 @@ private:
     int _colsCount;
     double* _matrix;
     MatrixIndexator<double>* _indexator;
+    Matrix* _lMatrix, *_uMatrix;
+    bool _matrixChanged;
+
+
     Matrix(int rowsCount, int colsCount)
     {
         _rowsCount = rowsCount;
         _colsCount = colsCount;
         _matrix = new double[rowsCount * colsCount];
         _indexator = new MatrixIndexator<double>(_matrix, _colsCount);
+        _matrixChanged = false;
+        _lMatrix = nullptr;
+        _uMatrix = nullptr;
     }
 
     Matrix()
     {
-
+        _matrixChanged = false;
+        _lMatrix = nullptr;
+        _uMatrix = nullptr;
     }
 
     static void TransposeSquare(Matrix* matrix)
@@ -76,6 +88,49 @@ private:
                     tmp1 = matrix->Value(i, j)->Get();
                 }
             }
+        }
+    }
+
+    void GetLuFactorization()
+    {
+        ClearMatrices();
+        int m = GetRowsCount(), n = GetColsCount(), lda = max(1, m), info = 0, ipivSize = min(m, n);
+        Matrix* a = Copy(this);
+        int* ipiv = new int[ipivSize];
+        dgetrf_(&m,
+            &n,
+            a->_matrix,
+            &lda,
+            ipiv,
+            &info);
+        _lMatrix = Create(m, n);
+        _uMatrix = Create(m, n);
+        for (int i = 0; i < a->GetRowsCount(); i++)
+        {
+            for (int j = 0; j < a->GetColsCount(); j++)
+            {
+                if (m >= n)
+                {
+                    _uMatrix->Value(i, j)->Set(a->Value(i, j)->Get());
+                }
+                else
+                {
+                    _lMatrix->Value(i, j)->Set(a->Value(i, j)->Get());
+                }
+            }
+        }
+    }
+    void ClearMatrices()
+    {
+        if (_lMatrix != nullptr)
+        {
+            delete _lMatrix;
+            _lMatrix = nullptr;
+        }
+        if (_uMatrix != nullptr)
+        {
+            delete _uMatrix;
+            _uMatrix = nullptr;
         }
     }
 
@@ -386,6 +441,45 @@ public:
         Matrix* result = Copy(this);
         Transpose(result);
         return result;
+    }
+
+    Vector* SolveByLU(Vector* b)
+    {
+        int size = b->GetSize();
+        if (GetColsCount() != GetRowsCount())
+            throw std::exception("Matrix must be square");
+        if (size != GetRowsCount())
+        {
+            string message = "Invalid vector size: " + std::to_string(size);
+            throw std::invalid_argument(message.c_str());
+        }          
+        GetLuFactorization();
+        if (_lMatrix == nullptr)
+            throw std::invalid_argument("L matrix is null");
+        if (_uMatrix == nullptr)
+            throw std::invalid_argument("U matrix is null");
+        Vector* y = Vector::Create(size);
+        double sum;
+        for (int i = 0; i < size; i++)
+        {
+            sum = 0;
+            for (int k = 0; k < i; k++)
+            {
+                sum += _lMatrix->Value(i, k)->Get() * y->Value(k)->Get();
+            }
+            y->Value(i)->Set(b->Value(i)->Get() - sum);
+        }
+        Vector* x = Vector::Create(size);
+        for (int i = size - 1; i >= 0; i--)
+        {
+            sum = 0;
+            for (int k = i + 1; k < size; k++)
+            {
+                sum += _uMatrix->Value(i, k)->Get() * x->Value(k)->Get();
+            }
+            x->Value(i)->Set(1 / _uMatrix->Value(i, i)->Get() * (y->Value(i)->Get() - sum));
+        }
+        return x;
     }
 
     ~Matrix()
