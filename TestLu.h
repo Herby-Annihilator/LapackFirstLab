@@ -58,7 +58,7 @@ private:
         {
             for (int j = 0; j < _factorisedAMatrix->GetColsCount(); j++)
             {
-                if (i >= j)
+                if (i < j)
                 {
                     _uMatrix->Value(i, j)->Set(_factorisedAMatrix->Value(i, j)->Get());
                 }
@@ -69,6 +69,55 @@ private:
             }
         }
     }
+
+    void ThrowIfNotEqual(Matrix* first, Matrix* second, double eps)
+    {
+        string message = "";
+        if (second == nullptr)
+            throw std::invalid_argument("Input matrix is null");
+        if (first->GetRowsCount() != second->GetRowsCount())
+        {
+            message.append("This rows count ("
+                + std::to_string(first->GetRowsCount())
+                + ") is not equal to second rows count("
+                + std::to_string(second->GetRowsCount())
+                + ")");
+            throw exception(message.c_str());
+        }
+        if (first->GetColsCount() != second->GetColsCount())
+        {
+            message.append("This cols count ("
+                + std::to_string(first->GetColsCount())
+                + ") is not equal to second cols count("
+                + std::to_string(second->GetColsCount())
+                + ")");
+            throw exception(message.c_str());
+        }
+        for (int i = 0; i < first->GetRowsCount(); i++)
+        {
+            for (int j = 0; j < first->GetColsCount(); j++)
+            {
+                if (abs(abs(first->Value(i, j)->Get()) - abs(second->Value(i, j)->Get())) > eps)
+                {
+                    message.append("This["
+                        + std::to_string(i)
+                        + "]["
+                        + std::to_string(j)
+                        + "] == ("
+                        + std::to_string(first->Value(i, j)->Get())
+                        + ") is not equal to second["
+                        + std::to_string(i)
+                        + "]["
+                        + std::to_string(j)
+                        + "] == ("
+                        + std::to_string(second->Value(i, j)->Get())
+                        + ")");
+                    throw exception(message.c_str());
+                }
+            }
+        }
+    }
+
 public:
     TestLu()
     {
@@ -93,12 +142,20 @@ public:
         cout << "Getting LU-factorization... ";
         _aMatrix->GetLuFactorization();
         cout << "Done!" << endl;
+        double eps = 0.1;
         cout << "Comparing L matrices... ";
-        _lMatrix->ThrowIfNotEqual(_aMatrix->_lMatrix);
-        cout << "Done!" << endl;
+        ThrowIfNotEqual(_lMatrix, _aMatrix->_lMatrix, eps);
+        cout << "Done!" << endl << "Expected L matrix is: " << endl;
+        _lMatrix->Display();
+        cout << "Actual L matrix is: " << endl;
+        _aMatrix->_lMatrix->Display();
         cout << "Comparing U matrices... ";
-        _uMatrix->ThrowIfNotEqual(_aMatrix->_uMatrix);
-        cout << "Done!" << endl << "Test successfuly completed!" << endl;
+        ThrowIfNotEqual(_uMatrix, _aMatrix->_uMatrix, eps);
+        cout << "Done!" << endl << "Expected U matrix is:" << endl;
+        _uMatrix->Display();
+        cout << "Actual U matrix is: " << endl;
+        _aMatrix->_uMatrix->Display();
+        cout << "Test successfuly completed!" << endl;
     }
 };
 

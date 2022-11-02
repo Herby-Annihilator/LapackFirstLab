@@ -107,12 +107,12 @@ private:
             &info);
         _lMatrix = Create(m, n);
         _uMatrix = Create(m, n);
-        //Transpose(a);
+        Transpose(a);
         for (int i = 0; i < a->GetRowsCount(); i++)
         {
             for (int j = 0; j < a->GetColsCount(); j++)
             {
-                if (i >= j)
+                if (i < j)
                 {
                     _uMatrix->Value(i, j)->Set(a->Value(i, j)->Get());
                 }
