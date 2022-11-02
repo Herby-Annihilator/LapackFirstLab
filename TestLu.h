@@ -62,7 +62,7 @@ private:
         {
             for (int j = 0; j < _factorisedAMatrix->GetColsCount(); j++)
             {
-                if (i < j)
+                if (i <= j)
                 {
                     _uMatrix->Value(i, j)->Set(_factorisedAMatrix->Value(i, j)->Get());
                 }
@@ -191,9 +191,13 @@ public:
         cout << "Initializing test matrix... ";
         InitAMatrix();
         cout << "Done!" << endl;
+        cout << "A matrix is:" << endl;
+        _aMatrix->Display();
         cout << "Initializing factorised matrix... ";
         InitFactorisedAMtrix();
         cout << "Done!" << endl;
+        cout << "Factorised matrix is:" << endl;
+        _factorisedAMatrix->Display();
         cout << "Initializing L and U matrices... ";
         InitLUMatrices();
         cout << "Done!" << endl;
@@ -221,10 +225,14 @@ public:
         cout << "Initializing test matrix... ";
         InitAMatrixForSolveByLUMethod();
         cout << "Done!" << endl;
+        cout << "Test matrix is:" << endl;
+        _aMatrix->Display();
 
         cout << "Initializing vector B... ";
         InitVectorBForSolveByLUMethod();
         cout << "Done!" << endl;
+        cout << "Vector B is: ";
+        _vectorB->Display();
 
         cout << "Initializing result vector... ";
         InitResultVectorForSolveByLUMethod();

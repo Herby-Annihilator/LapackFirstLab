@@ -9,6 +9,7 @@
 #include "EigenvectorToVectorAdapter.h"
 #include "TestMatrix.h"
 #include "TestLu.h"
+#include "Stopwatch.h"
 
 void DemonstrateArithmeticOperations()
 {
@@ -172,7 +173,32 @@ void ComputeEigenvaluesAndEigenvectors(Matrix* matrixA)
     //delete matrixA;
 }
 
-
+void SolveByLU()
+{
+    Matrix* matrix;
+    Vector* vectorB;
+    int size = 0;
+    cout << endl << "Введите размер матрицы: ";
+    cin >> size;
+    Stopwatch sw;
+    cout << "Генерация матрицы..." << endl;
+    sw.Start();
+    matrix = Matrix::CreateRandom(size, size);
+    sw.Stop();
+    cout << "Матрица сгенерирована. Time - " << sw.Get() << " c" << endl;
+    cout << "Генерация вектора В..." << endl;
+    sw.Reset();
+    sw.Start();
+    vectorB = Vector::CreateRandom(size);
+    sw.Stop();
+    cout << "Вектор В сгенерирован. Time - " << sw.Get() << " c" << endl;
+    cout << "Start computing..." << endl;
+    sw.Reset();
+    sw.Start();
+    Vector* result = matrix->SolveByLU(vectorB);
+    sw.Stop();
+    cout << "Completed! Time of work - " << sw.Get() << " c" << endl << endl;
+}
 
 void DemonstrateArithmeticOperationsWithLargeMatriciesAndVectors()
 {
@@ -238,7 +264,9 @@ int main()
                 << endl
                 << "6 - Запуск теста LU"
                 << endl
-                << "7 - Выход"
+                << "7 - Решение системы уравнений LU-разложением (рандомная матрица)"
+                << endl
+                << "8 - Выход"
                 << endl
                 << "Ваш выбор: ";
 
@@ -274,6 +302,10 @@ int main()
                 cout << "Done!" << endl;
             }
             else if (variant == 7)
+            {
+                SolveByLU();
+            }
+            else if (variant == 8)
             {
                 exit = true;
             }

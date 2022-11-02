@@ -112,7 +112,7 @@ private:
         {
             for (int j = 0; j < a->GetColsCount(); j++)
             {
-                if (i < j)
+                if (i <= j)
                 {
                     _uMatrix->Value(i, j)->Set(a->Value(i, j)->Get());
                 }
