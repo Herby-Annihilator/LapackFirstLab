@@ -267,7 +267,11 @@ int main()
             else if (variant == 6)
             {
                 TestLu testLu;
+                cout << endl << "Starting testing GetLuFactorization method..." << endl;
                 testLu.GetLuFactorization_CheckMatrices_ShouldNotThrow();
+                cout << endl << "Starting testing SolveBylU method..." << endl;
+                testLu.SolveByLU_CheckResultVector_ShouldNotThrow();
+                cout << "Done!" << endl;
             }
             else if (variant == 7)
             {

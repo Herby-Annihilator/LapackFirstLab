@@ -95,7 +95,7 @@ private:
 
     void GetLuFactorization()
     {
-        ClearMatrices();
+        ClearLUMatrices();
         int m = GetRowsCount(), n = GetColsCount(), lda = max(1, m), info = 0, ipivSize = min(m, n);
         Matrix* a = Copy(this);
         int* ipiv = new int[ipivSize];
@@ -123,7 +123,7 @@ private:
             }
         }
     }
-    void ClearMatrices()
+    void ClearLUMatrices()
     {
         if (_lMatrix != nullptr)
         {

@@ -40,6 +40,13 @@ public:
         return Create(size, 0);
     }
 
+    static Vector* Create(double* vector, int size)
+    {
+        Vector* result = new Vector(size);
+        result->_vector = vector;
+        return result;
+    }
+
     static Vector* CreateRandom(int size)
     {
         Vector* result = new Vector(size);

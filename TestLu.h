@@ -12,7 +12,11 @@ private:
     Matrix* _factorisedAMatrix;
     Matrix* _lMatrix;
     Matrix* _uMatrix;
+
+    Vector* _vectorB;
+    Vector* _solutionVector;
     int _size;
+    int _vectorsSize;
 
     void InitAMatrix()
     {
@@ -70,7 +74,7 @@ private:
         }
     }
 
-    void ThrowIfNotEqual(Matrix* first, Matrix* second, double eps)
+    void CompareMetricesAndThrowIfNotEqual(Matrix* first, Matrix* second, double eps)
     {
         string message = "";
         if (second == nullptr)
@@ -118,14 +122,68 @@ private:
         }
     }
 
+    void CompareVectorsAndThrowIfNotEqual(Vector* first, Vector* second, double eps)
+    {
+        if (first == nullptr)
+            throw invalid_argument("First vector is null!");
+        if (second == nullptr)
+            throw invalid_argument("Second vector is null!");
+        if (first->GetSize() != second->GetSize())
+        {
+            string message = "First vector size (" + std::to_string(first->GetSize()) + ") not equal to second vector size ("
+                + std::to_string(second->GetSize()) + ")";
+            throw exception(message.c_str());
+        }
+        for (int i = 0; i < first->GetSize(); i++)
+        {
+            if (abs(abs(first->Value(i)->Get()) - abs(second->Value(i)->Get())) > eps)
+            {
+                string message = "first[" + std::to_string(i) + "] == (" +  std::to_string(first->Value(i)->Get())
+                    + ") is not equal to second[" + std::to_string(i) + "] == ("
+                    + std::to_string(second->Value(i)->Get()) + ")";
+                throw exception(message.c_str());
+            }
+        }
+    }
+
+    void InitAMatrixForSolveByLUMethod()
+    {
+        double* matrix = new double[_vectorsSize * _vectorsSize]
+        {
+            2, -4, 2,
+            4, 5, -3,
+            -3, -4, 7,
+        };
+        _aMatrix = Matrix::Create(matrix, _vectorsSize, _vectorsSize);
+    }
+    void InitVectorBForSolveByLUMethod()
+    {
+        double* vector = new double[_vectorsSize]
+        {
+            5, 1, 0,
+        };
+        _vectorB = Vector::Create(vector, _vectorsSize);
+    }
+    void InitResultVectorForSolveByLUMethod()
+    {
+        double* vector = new double[_vectorsSize]
+        {
+            1.125, -0.625, 0.125,
+        };
+        _solutionVector = Vector::Create(vector, _vectorsSize);
+    }
+
 public:
     TestLu()
     {
         _size = 9;
+        _vectorsSize = 3;
         _aMatrix = nullptr;
         _lMatrix = nullptr;
         _uMatrix = nullptr;
         _factorisedAMatrix = nullptr;
+        _vectorB = nullptr;
+        _solutionVector = nullptr;
     }
 
     void GetLuFactorization_CheckMatrices_ShouldNotThrow()
@@ -144,17 +202,45 @@ public:
         cout << "Done!" << endl;
         double eps = 0.1;
         cout << "Comparing L matrices... ";
-        ThrowIfNotEqual(_lMatrix, _aMatrix->_lMatrix, eps);
+        CompareMetricesAndThrowIfNotEqual(_lMatrix, _aMatrix->_lMatrix, eps);
         cout << "Done!" << endl << "Expected L matrix is: " << endl;
         _lMatrix->Display();
         cout << "Actual L matrix is: " << endl;
         _aMatrix->_lMatrix->Display();
         cout << "Comparing U matrices... ";
-        ThrowIfNotEqual(_uMatrix, _aMatrix->_uMatrix, eps);
+        CompareMetricesAndThrowIfNotEqual(_uMatrix, _aMatrix->_uMatrix, eps);
         cout << "Done!" << endl << "Expected U matrix is:" << endl;
         _uMatrix->Display();
         cout << "Actual U matrix is: " << endl;
         _aMatrix->_uMatrix->Display();
+        cout << "Test successfuly completed!" << endl;
+    }
+
+    void SolveByLU_CheckResultVector_ShouldNotThrow()
+    {
+        cout << "Initializing test matrix... ";
+        InitAMatrixForSolveByLUMethod();
+        cout << "Done!" << endl;
+
+        cout << "Initializing vector B... ";
+        InitVectorBForSolveByLUMethod();
+        cout << "Done!" << endl;
+
+        cout << "Initializing result vector... ";
+        InitResultVectorForSolveByLUMethod();
+        cout << "Done!" << endl;
+
+        cout << "Invoke SolveByLU method... ";
+        Vector* result = _aMatrix->SolveByLU(_vectorB);
+        cout << "Done!" << endl;
+
+        cout << "Comparing expected and actual vectors...";
+        CompareVectorsAndThrowIfNotEqual(_solutionVector, result, 0.1);
+        cout << "Done!" << endl << "Expected vector is: ";
+        _solutionVector->Display();
+        cout << "Actual vector is: ";
+        result->Display();
+
         cout << "Test successfuly completed!" << endl;
     }
 };
